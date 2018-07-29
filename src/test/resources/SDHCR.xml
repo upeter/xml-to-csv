@@ -68,7 +68,7 @@
               <FULL_NAME>Jane,Queen,Mrs</FULL_NAME>
               <DEPARTURE>22/06/18</DEPARTURE>
               <PERSONS>2</PERSONS>
-              <GROUP_NAME></GROUP_NAME>
+              <!--<GROUP_NAME></GROUP_NAME>-->
               <NO_OF_ROOMS>1</NO_OF_ROOMS>
               <ROOM_CATEGORY_LABEL>CRBIG</ROOM_CATEGORY_LABEL>
               <RATE_CODE>BARCR</RATE_CODE>
@@ -193,7 +193,7 @@
               <FULL_NAME>Jane,Queen,Mr</FULL_NAME>
               <DEPARTURE>11/01/18</DEPARTURE>
               <PERSONS>1</PERSONS>
-              <GROUP_NAME></GROUP_NAME>
+              <GROUP_NAME>Bla</GROUP_NAME>
               <NO_OF_ROOMS>1</NO_OF_ROOMS>
               <ROOM_CATEGORY_LABEL>CRBIG</ROOM_CATEGORY_LABEL>
               <RATE_CODE>LMCR</RATE_CODE>

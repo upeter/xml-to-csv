@@ -22,21 +22,19 @@ fun List<Any>.pad(size: Int, padValue: Any): List<Any> {
     return recurse(elsToAdd, this)
 }
 
-fun <E> transp(xs: List<List<E>>): List<List<E>> {
-    fun <E> List<E>.head(): E = this.first()
-    fun <E> List<E>.tail(): List<E> = this.takeLast(this.size - 1)
-    fun <E> E.append(xs: List<E>): List<E> = listOf(this).plus(xs)
 
-    xs.filter { it.isNotEmpty() }.let { ys ->
-        return when (ys.isNotEmpty()) {
-            true -> ys.map { it.head() }.append(transp(ys.map { it.tail() }))
-            else -> emptyList()
-        }
+fun <E> List<List<E>>.transpose(): List<List<E>> {
+    if (isEmpty()) return this
+
+    val width = first().size
+    if (any { it.size != width }) {
+        throw IllegalArgumentException("All nested lists must have the same size, but sizes were ${map { it.size }}")
+    }
+
+    return (0 until width).map { col ->
+        (0 until size).map { row -> this[row][col] }
     }
 }
-
-fun <E> List<List<E>>.transpose(): List<List<E>> = transp(this)
-
 
 fun Node.toXml(): String {
     val transfac = TransformerFactory.newInstance()
@@ -58,6 +56,7 @@ fun Node?.childTextNodes(): List<Pair<String, String>> {
                 if (node != null)
                     when {
                         node.nodeType == Node.ELEMENT_NODE && node.firstChild?.nodeType == Node.TEXT_NODE -> res + (node.getNodeName() to node.firstChild.textContent)
+                        node.nodeType == Node.ELEMENT_NODE && node.firstChild == null -> res + (node.getNodeName() to "")
                         else -> (res union recurse(node.childNodes, res)).toList()
                     } else res
             }
@@ -70,10 +69,10 @@ fun Node?.childTextNodes(): List<Pair<String, String>> {
 class Tsv(val writer: PrintStream) {
 
     val Separator = "\t"
-    private var csv = mutableMapOf<String, List<Any>>().withDefault { emptyList() }
+    private var csv = mutableMapOf<String, List<Any>>()
 
     fun put(key: String, value: Any) {
-        csv.put(key, csv.getValue(key) + value)
+        csv.put(key, csv.getOrDefault(key, emptyList()) + value)
     }
 
     fun pad() {

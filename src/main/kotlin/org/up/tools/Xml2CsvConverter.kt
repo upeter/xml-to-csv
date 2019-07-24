@@ -3,6 +3,7 @@ package org.up.tools
 import org.w3c.dom.Document
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
+import org.xml.sax.InputSource
 import java.io.File
 import java.io.PrintStream
 import java.io.StringWriter
@@ -13,6 +14,8 @@ import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
+import java.io.InputStreamReader
+import java.io.FileInputStream
 
 fun List<Any>.pad(size: Int, padValue: Any): List<Any> {
     val elsToAdd = size - this.size
@@ -100,14 +103,21 @@ class XML2CSVConverter {
     private val builderFactory = DocumentBuilderFactory.newInstance()
     private val builder = builderFactory.newDocumentBuilder()
 
+    private fun loadFile(file: File):InputSource {
+        val inputStream = FileInputStream(file)
+        val reader = InputStreamReader(inputStream, "UTF-8")
+        val source = InputSource(reader)
+        source.encoding = "UTF-8"
+        return source
+    }
     internal fun load(vararg files: File): List<Pair<File, Document>> {
         return files.flatMap {
             when {
-                it.isFile && it.absolutePath.endsWith(".xml") -> listOf(it to builder.parse(it))
+                it.isFile && it.absolutePath.endsWith(".xml") -> listOf(it to builder.parse(loadFile(it)))
                 it.isDirectory && it.listFiles()
                         .any { it.absolutePath.endsWith(".xml") } -> it.listFiles()
                         .filter { it.absolutePath.endsWith(".xml") }
-                        .map { it as File to builder.parse(it as File) }
+                        .map { it as File to builder.parse(loadFile(it)) }
                 else -> {
                     println("WARNING: ${it} has or is not an XML file")
                     emptyList()
